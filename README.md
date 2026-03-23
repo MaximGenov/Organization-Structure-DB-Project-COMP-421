@@ -1,10 +1,10 @@
 ---
+---
 
-<p align="center">
-<strong>Copyright (c) 2026</strong><br>
-<strong>[Authors: David Marji, Brian Morava, Maxim Miladinov-Genov, Alex Wyrstiuk]</strong>
-</p>
+## Copyright (c) 2026
+**[Authors: David Marji, Brian Morava, Maxim Miladinov-Genov, Alex Wyrstiuk]**
 
+---
 ---
 In this Project, we attempt to simulate a real-world corporate Database System
 of a firm's employee structure. In addition to defining a partition
