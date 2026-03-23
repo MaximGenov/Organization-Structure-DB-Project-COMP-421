@@ -1,6 +1,11 @@
-# Organization-Structure-DB-Project-COMP-421
-Copyright (c) 2026 [Authors: David Marji, Brian Morava, Maxim Miladinov-Genov, Alex Wyrstiuk]
+---
 
+<p align="center">
+<strong>Copyright (c) 2026</strong><br>
+<strong>[Authors: David Marji, Brian Morava, Maxim Miladinov-Genov, Alex Wyrstiuk]</strong>
+</p>
+
+---
 In this Project, we attempt to simulate a real-world corporate Database System
 of a firm's employee structure. In addition to defining a partition
 of its employees with DDL's, this application shall support 
