@@ -1,0 +1,21 @@
+WITH objective_stats AS ( SELECT c.codename, c.cmpt_name, COUNT(CASE WHEN o.is_complete = 'FALSE' THEN 1 END) AS incomplete_objectives FROM CS421G02.component c LEFT JOIN CS421G02.objective o ON o.codename = c.codename AND o.cmpt_name = c.cmpt_name GROUP BY c.codename, c.cmpt_name ), task_stats AS ( SELECT c.codename, c.cmpt_name, COUNT(CASE WHEN t.status IN ('TODO','IN_PROGRESS','ON_HOLD') THEN 1 END) AS active_tasks, COUNT(CASE WHEN t.status = 'ON_HOLD' THEN 1 END) AS on_hold_tasks FROM CS421G02.component c LEFT JOIN CS421G02.objective o ON o.codename = c.codename AND o.cmpt_name = c.cmpt_name LEFT JOIN CS421G02.task t ON t.codename = o.codename AND t.cmpt_name = o.cmpt_name AND t.obj_id = o.obj_id GROUP BY c.codename, c.cmpt_name ), component_stats AS ( SELECT o.codename, o.cmpt_name, o.incomplete_objectives, t.active_tasks, t.on_hold_tasks FROM objective_stats o JOIN task_stats t ON t.codename = o.codename AND t.cmpt_name = o.cmpt_name ) SELECT codename, cmpt_name AS component_name, incomplete_objectives, active_tasks, on_hold_tasks, DENSE_RANK() OVER ( PARTITION BY codename ORDER BY incomplete_objectives DESC, active_tasks DESC, on_hold_tasks DESC ) AS risk_rank_in_project FROM component_stats ORDER BY codename, risk_rank_in_project, component_name
+
+CODENAME             COMPONENT_NAME                                                                                       INCOMPLETE_OBJECTIVES ACTIVE_TASKS ON_HOLD_TASKS RISK_RANK_IN_PROJECT
+-------------------- ---------------------------------------------------------------------------------------------------- --------------------- ------------ ------------- --------------------
+Bear                 Electrical                                                                                                               1            2             1                    1
+Bear                 Vehicle Frame                                                                                                            1            1             0                    2
+Bear                 Concept Proposal                                                                                                         0            0             0                    3
+Bear                 Structural                                                                                                               0            0             0                    3
+Cobra                RF Electronics                                                                                                           2            2             0                    1
+Cobra                Electrical                                                                                                               1            1             0                    2
+Cobra                Power                                                                                                                    0            1             0                    3
+Cobra                Communications                                                                                                           0            0             0                    4
+Orion                Cryogenic Battery Cooling                                                                                                1            3             0                    1
+Orion                Lidar Perception                                                                                                         1            2             0                    2
+Orion                Navigation Algorithms                                                                                                    1            2             0                    2
+Orion                Autonomous Systems                                                                                                       0            0             0                    3
+Orion                Thermal Management                                                                                                       0            0             0                    3
+
+  13 record(s) selected.
+
+
