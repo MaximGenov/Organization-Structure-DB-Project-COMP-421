@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.util.Scanner;
 
+import static java.lang.System.exit;
+
 public class OrganizationStructure {
     static final String URL = "jdbc:db2://winter2026-comp421.cs.mcgill.ca:50000/COMP421";
     static final String USER = "cs421g02";
@@ -57,6 +59,7 @@ public class OrganizationStructure {
                         break;
                     case 9:
                         //todo
+                        exit(0);
                         break;
                     default:
                         //todo
