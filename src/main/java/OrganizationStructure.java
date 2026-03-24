@@ -1,6 +1,9 @@
 import java.sql.*;
 import java.util.Scanner;
 
+import java.sql.Statement;
+import java.sql.ResultSet;
+
 import static java.lang.System.exit;
 
 public class OrganizationStructure {
@@ -50,6 +53,12 @@ public class OrganizationStructure {
                         break;
                     case 6:
                         //todo
+                        Statement stmt = connection.createStatement();
+                        ResultSet resultSet = stmt.executeQuery("select * from team");
+                        //System.out.println(resultSet.getString(1));
+                        while (resultSet.next()) {   // moves cursor to the next row
+                            System.out.println(resultSet.getString("team_id") + "  " + resultSet.getString("department") + "  " + resultSet.getString("mngr_emp_id"));
+                        }
                         break;
                     case 7:
                         //todo
