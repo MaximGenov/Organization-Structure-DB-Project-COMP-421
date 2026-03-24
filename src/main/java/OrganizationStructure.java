@@ -1,8 +1,12 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Scanner;
 
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.stream.Collectors;
 
 import static java.lang.System.exit;
 
@@ -24,12 +28,12 @@ public class OrganizationStructure {
                 System.out.println("3. Create new Project");
                 System.out.println("4. Create a meeting");
                 System.out.println("5. Submit resignation");
+                System.out.println("6. Get Teams");
+                System.out.println("7. Get taskless employees");
+                System.out.println("8. Get employees associated with at least one project");
+                System.out.println("9. List teams that are free");
 
-                System.out.println("6. Get taskless employees");
-                System.out.println("7. Get employees associated with at least one project");
-                System.out.println("8. List teams that are free");
-
-                System.out.println("9. Quit");
+                System.out.println("10. Quit");
                 System.out.println("Choose an option (by number)");
 
                 int choice = scanner.nextInt();
@@ -38,6 +42,7 @@ public class OrganizationStructure {
                 switch (choice) {
                     case 1:
                         //todo
+                        
                         break;
                     case 2:
                         //todo
@@ -52,7 +57,6 @@ public class OrganizationStructure {
                         //todo
                         break;
                     case 6:
-                        //todo
                         Statement stmt = connection.createStatement();
                         ResultSet resultSet = stmt.executeQuery("select * from team");
                         //System.out.println(resultSet.getString(1));
@@ -62,12 +66,23 @@ public class OrganizationStructure {
                         break;
                     case 7:
                         //todo
+                        String query2File = "src/P2/query2.sql";
+                        String query2 = Files.lines(Paths.get(query2File)).collect(Collectors.joining("\n"));
+                        Statement stmt7 = connection.createStatement();
+                        ResultSet result = stmt7.executeQuery(query2);
+                        while (result.next()) {   // moves cursor to the next row
+                            System.out.println(result.getString("std_id") + "  " + result.getString("name") + "  " + result.getString("email"));
+                        }
                         break;
                     case 8:
                         //todo
                         break;
                     case 9:
                         //todo
+                        break;
+                    case 10:
+                        //todo
+                        System.out.println("Aufwierdersehn!");
                         exit(0);
                         break;
                     default:
@@ -75,7 +90,7 @@ public class OrganizationStructure {
 
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }
