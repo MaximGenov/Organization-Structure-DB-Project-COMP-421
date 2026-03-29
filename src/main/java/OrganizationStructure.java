@@ -81,19 +81,13 @@ public class OrganizationStructure {
                         // and the first two participating employees.
                         // Then, generate a meeting_id, create the meeting tuple
                         // and add the first two tuples to the attends table.
-                        // Then, run the same function from case 5 to continually prompt the
+                        // Then, continually prompt the
                         // user for additional employees to add to the meeting.
                         // If they return done, then terminate.
                         break;
                     case 5:
                         //todo
-                        // Run Maxim's first modification command
-                        /*
-                        String Mod1File = "src/P2/mod1.sql";
-                        String mod1 = Files.lines(Paths.get(Mod1File)).collect(Collectors.joining("\n"));
-                        Statement stmt5 = connection.createStatement();
-                        stmt5.executeQuery(mod1);
-                        */
+                        // Run the first modification command
                         try {
                             ExModFromFile(connection, "src/P2/mod1.sql");
                             System.out.println("\nThe following Standard employees were promoted to supervisors:");
@@ -126,12 +120,9 @@ public class OrganizationStructure {
                         break;
                     case 9:
                         //todo
-                        // Run Maxim's second modification command
-                        String Mod2File = "src/P2/mod2.sql";
-                        String mod2 = Files.lines(Paths.get(Mod2File)).collect(Collectors.joining("\n"));
-                        Statement stmt9 = connection.createStatement();
-                        stmt9.executeQuery(mod2);
-                        System.out.println("Completed components were successfully retired.");
+                        // Run the second modification command
+                        ExModFromFile(connection, "src/P2/mod2.sql");
+                        System.out.println("\nCompleted components were successfully retired.\n");
                         break;
                     case 10:
                         //todo
