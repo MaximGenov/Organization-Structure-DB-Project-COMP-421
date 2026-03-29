@@ -88,32 +88,40 @@ public class OrganizationStructure {
                     case 5:
                         //todo
                         // Run Maxim's first modification command
+                        String Mod1File = "src/P2/mod1.sql";
+                        String mod1 = Files.lines(Paths.get(Mod1File)).collect(Collectors.joining("\n"));
+                        Statement stmt5 = connection.createStatement();
+                        stmt5.executeQuery(mod1);
+                        System.out.println("Promotions were given successfully.");
                         break;
                     case 6:
                         Statement stmt = connection.createStatement();
-                        ResultSet resultSet = stmt.executeQuery("select * from team");
+                        ResultSet result6 = stmt.executeQuery("select * from team");
                         //System.out.println(resultSet.getString(1));
-                        while (resultSet.next()) {   // moves cursor to the next row
-                            System.out.println(resultSet.getString("team_id") + "  " + resultSet.getString("department") + "  " + resultSet.getString("mngr_emp_id"));
+                        while (result6.next()) {   // moves cursor to the next row
+                            System.out.println(result6.getString("team_id") + "  " + result6.getString("department") + "  " + result6.getString("mngr_emp_id"));
                         }
                         break;
                     case 7:
                         //todo
-                        String query2File = "src/P2/query2.sql";
-                        String query2 = Files.lines(Paths.get(query2File)).collect(Collectors.joining("\n"));
-                        Statement stmt7 = connection.createStatement();
-                        ResultSet result = stmt7.executeQuery(query2);
-                        while (result.next()) {   // moves cursor to the next row
-                            System.out.println(result.getString("std_id") + "  " + result.getString("name") + "  " + result.getString("email"));
-                        }
+                        // Run Query 2
+                        String query2_File = "src/P2/query2.sql";
+                        ExQueryFromFile(connection, query2_File);
                         break;
                     case 8:
                         //todo
-                        // Run Maxim's Query 5
+                        // Run Query 5
+                        String query5_File = "src/P2/query5.sql";
+                        ExQueryFromFile(connection, query5_File);
                         break;
                     case 9:
                         //todo
                         // Run Maxim's second modification command
+                        String Mod2File = "src/P2/mod2.sql";
+                        String mod2 = Files.lines(Paths.get(Mod2File)).collect(Collectors.joining("\n"));
+                        Statement stmt9 = connection.createStatement();
+                        stmt9.executeQuery(mod2);
+                        System.out.println("Completed components were successfully retired.");
                         break;
                     case 10:
                         //todo
@@ -122,11 +130,45 @@ public class OrganizationStructure {
                         break;
                     default:
                         //todo
-
                 }
             }
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // private method to execute a query given the .sql file it originates from
+    private static int ExQueryFromFile(Connection connection, String QueryPATH) throws IOException, SQLException {
+        String queryFile = QueryPATH;
+        String query = Files.lines(Paths.get(queryFile)).collect(Collectors.joining("\n"));
+
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+
+        // Get metadata about the result to find the number of columns
+        ResultSetMetaData meta = rs.getMetaData();
+        int columnCount = meta.getColumnCount();
+
+        // print a newline before the output begins
+        System.out.println();
+
+        // Print column names
+        for (int i = 1; i <= columnCount; i++) {
+            System.out.print(meta.getColumnName(i) + "  ");
+        }
+        // add one extra line so that the data is separated from the column names
+        System.out.print("\n---------------------------------------------------------------\n");
+        // Iterate through rows
+        while (rs.next()) {
+            // Iterate through columns
+            for (int i = 1; i <= columnCount; i++) {
+                String value = rs.getString(i);  // access by index instead of name
+                System.out.print(value + "  ");
+            }
+            System.out.println();
+        }
+        // add one more newline after the output is finished
+        System.out.println();
+        return 0;
     }
 }
