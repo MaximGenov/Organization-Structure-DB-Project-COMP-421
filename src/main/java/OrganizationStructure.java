@@ -95,24 +95,19 @@ public class OrganizationStructure {
                         System.out.println("Promotions were given successfully.");
                         break;
                     case 6:
-                        Statement stmt = connection.createStatement();
-                        ResultSet result6 = stmt.executeQuery("select * from team");
-                        //System.out.println(resultSet.getString(1));
-                        while (result6.next()) {   // moves cursor to the next row
-                            System.out.println(result6.getString("team_id") + "  " + result6.getString("department") + "  " + result6.getString("mngr_emp_id"));
-                        }
+                        ExQuery(connection, "select * from team", Boolean.FALSE);
                         break;
                     case 7:
                         //todo
                         // Run Query 2
                         String query2_File = "src/P2/query2.sql";
-                        ExQueryFromFile(connection, query2_File);
+                        ExQuery(connection, query2_File, Boolean.TRUE);
                         break;
                     case 8:
                         //todo
                         // Run Query 5
                         String query5_File = "src/P2/query5.sql";
-                        ExQueryFromFile(connection, query5_File);
+                        ExQuery(connection, query5_File, Boolean.TRUE);
                         break;
                     case 9:
                         //todo
@@ -137,13 +132,17 @@ public class OrganizationStructure {
         }
     }
 
-    // private method to execute a query given the .sql file it originates from
-    private static int ExQueryFromFile(Connection connection, String QueryPATH) throws IOException, SQLException {
-        String queryFile = QueryPATH;
-        String query = Files.lines(Paths.get(queryFile)).collect(Collectors.joining("\n"));
+    // private method to execute a query. If the query comes from a file, then the input "Query" should be the file path,
+    // and the input "FromFile" should be set to TRUE. Otherwise, "FromFile" should be set to FALSE
+    private static int ExQuery(Connection connection, String Query, Boolean FromFile) throws IOException, SQLException {
+
+        if (FromFile) {
+            String queryFile = Query;
+            Query = Files.lines(Paths.get(queryFile)).collect(Collectors.joining("\n"));
+        }
 
         Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
+        ResultSet rs = stmt.executeQuery(Query);
 
         // Get metadata about the result to find the number of columns
         ResultSetMetaData meta = rs.getMetaData();
