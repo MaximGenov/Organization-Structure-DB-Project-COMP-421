@@ -17,6 +17,7 @@ public class OrganizationStructure {
 
     public static void main(String args []) {
         Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter(System.lineSeparator());
         try(Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)){
             System.out.println("Connected to the database successfully!");
             boolean running = true;
@@ -41,7 +42,6 @@ public class OrganizationStructure {
 
                 switch (choice) {
                     case 1:
-                        //todo
                         // prompt the user for:
                         //  emp_id          INTEGER      NOT NULL,
                         //  name            VARCHAR(40) NOT NULL,
@@ -49,8 +49,60 @@ public class OrganizationStructure {
                         //  start_date      DATE         NOT NULL,
                         //  email           VARCHAR(40) NOT NULL,
                         //  password        VARCHAR(20)  NOT NULL,
-                        //  and finally, the kind of employee they are.
-                        // then, insert the two records into the database
+                        System.out.println("\nPlease provide the following information for the employee: ");
+                        System.out.println("Employee id: ");
+                        int emp_id = scanner.nextInt();
+                        System.out.println("Employee First and Last Name: ");
+                        String name = scanner.next();
+                        System.out.println("Position Title: ");
+                        String pos_title = scanner.next();
+                        System.out.println("Start Date: ");
+                        String start_date = scanner.next();
+                        System.out.println("Email Address: ");
+                        String email = scanner.next();
+                        System.out.println("Starting Password: ");
+                        String password = scanner.next();
+                        // first, try inserting the employee into the database. Handle the case where the employee id
+                        // could cause an integrity constraint error
+                        try{
+                            String insert_emp = "INSERT INTO employee(emp_id, name, position_title, start_date, email, password) VALUES\n" +
+                                    " ("+emp_id+", '"+name+"', '"+pos_title+"', '"+start_date+"', '"+email+"', '"+password+"');";
+
+                            ExUpdate(connection, insert_emp, Boolean.FALSE);
+                        } catch (SQLException e) {
+                            if("23505".equals(e.getSQLState())) {
+                                System.out.println("\nThe given employee ID already exists in the database. Please Select a new emp_id.\n");
+                                break;
+                            }
+                        }
+                        //  and finally, find out the kind of employee they are.
+                        System.out.println("\nPlease indicate what kind of employee they are (by number): ");
+                        System.out.println("1. Standard");
+                        System.out.println("2. Manager");
+                        System.out.println("3. Supervisor");
+                        System.out.println("4. Director");
+                        int choice2 = scanner.nextInt();
+                        // the insert statement differs slightly depending on the kind of employee they are
+                        switch(choice2) {
+                            case 1:
+                                ExUpdate(connection,"INSERT INTO standard(emp_id, team_id) VALUES ("+emp_id+", NULL);", Boolean.FALSE);
+                                System.out.println("\nThe new standard employee has been successfully added to the database.\n");
+                                break;
+                            case 2:
+                                ExUpdate(connection,"INSERT INTO manager(emp_id) VALUES ("+emp_id+");", Boolean.FALSE);
+                                System.out.println("\nThe new manager has been successfully added to the database.\n");
+                                break;
+                            case 3:
+                                ExUpdate(connection,"INSERT INTO supervisor(emp_id, codename, cmpt_name) VALUES ("+emp_id+", NULL, NULL);", Boolean.FALSE);
+                                System.out.println("\nThe new supervisor has been successfully added to the database.\n");
+                                break;
+                            case 4:
+                                ExUpdate(connection,"INSERT INTO director(emp_id, codename) VALUES ("+emp_id+", NULL);", Boolean.FALSE);
+                                System.out.println("\nThe new director has been successfully added to the database.\n");
+                                break;
+                            default:
+                                System.out.println("\nThe new employee has been successfully added to the database, but does not have a designation.\n");
+                        }
                         break;
                     case 2:
                         //todo
@@ -89,7 +141,7 @@ public class OrganizationStructure {
                         //todo
                         // Run the first modification command
                         try {
-                            ExModFromFile(connection, "src/P2/mod1.sql");
+                            ExUpdate(connection, "src/P2/mod1.sql", Boolean.TRUE);
                             System.out.println("\nThe following Standard employees were promoted to supervisors:");
                             ExQuery(connection, "src/extra_sql_P3/promotions.sql", Boolean.TRUE);
                         }
@@ -121,7 +173,7 @@ public class OrganizationStructure {
                     case 9:
                         //todo
                         // Run the second modification command
-                        ExModFromFile(connection, "src/P2/mod2.sql");
+                        ExUpdate(connection, "src/P2/mod2.sql", Boolean.TRUE);
                         System.out.println("\nCompleted components were successfully retired.\n");
                         break;
                     case 10:
@@ -178,12 +230,15 @@ public class OrganizationStructure {
     }
 
     // private method to execute a modification statement
-    private static int ExModFromFile(Connection connection, String ModFile) throws IOException, SQLException {
+    private static int ExUpdate(Connection connection, String update, Boolean FromFile) throws IOException, SQLException {
 
-        String ModStatement = Files.lines(Paths.get(ModFile)).collect(Collectors.joining("\n"));
+        if (FromFile) {
+            String updateFile = update;
+            update = Files.lines(Paths.get(updateFile)).collect(Collectors.joining("\n"));
+        }
 
         Statement stmt = connection.createStatement();
-        stmt.executeUpdate(ModStatement);
+        stmt.executeUpdate(update);
 
         return 0;
     }
