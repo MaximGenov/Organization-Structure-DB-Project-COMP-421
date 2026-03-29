@@ -88,11 +88,26 @@ public class OrganizationStructure {
                     case 5:
                         //todo
                         // Run Maxim's first modification command
+                        /*
                         String Mod1File = "src/P2/mod1.sql";
                         String mod1 = Files.lines(Paths.get(Mod1File)).collect(Collectors.joining("\n"));
                         Statement stmt5 = connection.createStatement();
                         stmt5.executeQuery(mod1);
-                        System.out.println("Promotions were given successfully.");
+                        */
+                        try {
+                            ExModFromFile(connection, "src/P2/mod1.sql");
+                            System.out.println("\nThe following Standard employees were promoted to supervisors:");
+                            ExQuery(connection, "src/extra_sql_P3/promotions.sql", Boolean.TRUE);
+                        }
+                        catch(SQLException e) {
+                            // this is only for catching the integrity constraint violation exception that occurs when
+                            // trying to run the modification statement several times.
+                            if("23505".equals(e.getSQLState())) {
+                                System.out.println("\nNo additional standard employees are eligible for a promotion.");
+                                System.out.println("However, the following employees were recently promoted and have not yet been assigned to a project:");
+                                ExQuery(connection, "src/extra_sql_P3/promotions.sql", Boolean.TRUE);
+                            }
+                        }
                         break;
                     case 6:
                         ExQuery(connection, "select * from team", Boolean.FALSE);
@@ -168,6 +183,17 @@ public class OrganizationStructure {
         }
         // add one more newline after the output is finished
         System.out.println();
+        return 0;
+    }
+
+    // private method to execute a modification statement
+    private static int ExModFromFile(Connection connection, String ModFile) throws IOException, SQLException {
+
+        String ModStatement = Files.lines(Paths.get(ModFile)).collect(Collectors.joining("\n"));
+
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate(ModStatement);
+
         return 0;
     }
 }
