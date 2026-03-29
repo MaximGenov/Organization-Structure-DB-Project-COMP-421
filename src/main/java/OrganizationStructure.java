@@ -27,11 +27,11 @@ public class OrganizationStructure {
                 System.out.println("2. Fire employee");
                 System.out.println("3. Create new Project");
                 System.out.println("4. Create a meeting");
-                System.out.println("5. Submit resignation");
+                System.out.println("5. Give Promotions");
                 System.out.println("6. Get Teams");
                 System.out.println("7. Get taskless employees");
                 System.out.println("8. Get employees associated with at least one project");
-                System.out.println("9. List teams that are free");
+                System.out.println("9. Retire Completed Project Components");
 
                 System.out.println("10. Quit");
                 System.out.println("Choose an option (by number)");
@@ -42,19 +42,52 @@ public class OrganizationStructure {
                 switch (choice) {
                     case 1:
                         //todo
-                        
+                        // prompt the user for:
+                        //  emp_id          INTEGER      NOT NULL,
+                        //  name            VARCHAR(40) NOT NULL,
+                        //  position_title  VARCHAR(50) NOT NULL,
+                        //  start_date      DATE         NOT NULL,
+                        //  email           VARCHAR(40) NOT NULL,
+                        //  password        VARCHAR(20)  NOT NULL,
+                        //  and finally, the kind of employee they are.
+                        // then, insert the two records into the database
                         break;
                     case 2:
                         //todo
+                        // prompt the user for the emp_id
+                        // then delete any tuples from the employee (and its subclass) table
+                        // possibly do something with the sub-menu here
                         break;
                     case 3:
                         //todo
+                        // prompt the user for:
+                        //  codename       VARCHAR(20)   NOT NULL,
+                        //  charter        VARCHAR(2000),
+                        //  start_date     DATE          NOT NULL,
+                        //  deadline_date  DATE          NOT NULL,
+                        // then list the available directors for them to assign.
+                        // Prompt the user for the emp_id of the required director.
+                        // we'll create the project record, and then attempt
+                        // to assign its director. If the emp_id was not for an
+                        // available director, then notify the user.
                         break;
                     case 4:
                         //todo
+                        // prompt the user for:
+                        //  title        VARCHAR(50) NOT NULL,
+                        //  start_time   TIMESTAMP    NOT NULL,
+                        //  end_time     TIMESTAMP    NOT NULL,
+                        //  description  VARCHAR(2000),
+                        // and the first two participating employees.
+                        // Then, generate a meeting_id, create the meeting tuple
+                        // and add the first two tuples to the attends table.
+                        // Then, run the same function from case 5 to continually prompt the
+                        // user for additional employees to add to the meeting.
+                        // If they return done, then terminate.
                         break;
                     case 5:
                         //todo
+                        // Run Maxim's first modification command
                         break;
                     case 6:
                         Statement stmt = connection.createStatement();
@@ -76,9 +109,11 @@ public class OrganizationStructure {
                         break;
                     case 8:
                         //todo
+                        // Run Maxim's Query 5
                         break;
                     case 9:
                         //todo
+                        // Run Maxim's second modification command
                         break;
                     case 10:
                         //todo

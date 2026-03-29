@@ -103,7 +103,7 @@ CREATE TABLE supervisor (
     REFERENCES component(codename, cmpt_name)
     ON DELETE SET NULL,
 
--- constraint to ensure that project name and component name are added simulaneously
+-- constraint to ensure that project name and component name are added simultaneously
   CONSTRAINT ck_supervised_component_pair
   CHECK (
     (codename IS NULL AND cmpt_name IS NULL)
