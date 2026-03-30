@@ -248,3 +248,6 @@ CREATE TABLE distributes (
   CONSTRAINT fk_distributes_team
     FOREIGN KEY (team_id) REFERENCES team(team_id)
 );
+
+-- Useful index for frequent joins/lookups by assigned standard employee
+CREATE INDEX idx_assigns_std_emp_id ON assigns(std_emp_id);

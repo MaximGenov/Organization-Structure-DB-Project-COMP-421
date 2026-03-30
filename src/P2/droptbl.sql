@@ -9,6 +9,8 @@ CONNECT TO COMP421;
 
 -- This is only an example of how you add drop table ddls to this file.
 --   You may remove it.
+
+DROP INDEX idx_assigns_std_emp_id;
 DROP TABLE attends;
 DROP TABLE distributes;
 DROP TABLE assigns;
