@@ -25,16 +25,14 @@ public class OrganizationStructure {
                 System.out.println("-----Corporation Database Menu-----");
 
                 System.out.println("1. Hire new employee");
-                System.out.println("2. Fire employee");
-                System.out.println("3. Create new Project");
-                System.out.println("4. Create a meeting");
-                System.out.println("5. Give Promotions");
-                System.out.println("6. Get Teams");
-                System.out.println("7. Get taskless employees");
-                System.out.println("8. Get employees associated with at least one project");
-                System.out.println("9. Retire Completed Project Components");
+                System.out.println("2. Create new Project");
+                System.out.println("3. Give Promotions");
+                System.out.println("4. Get Teams");
+                System.out.println("5. Get taskless employees");
+                System.out.println("6. Get employees associated with at least one project");
+                System.out.println("7. Retire Completed Project Components");
 
-                System.out.println("10. Quit");
+                System.out.println("8. Quit");
                 System.out.println("Choose an option (by number)");
 
                 int choice = scanner.nextInt();
@@ -42,6 +40,9 @@ public class OrganizationStructure {
 
                 switch (choice) {
                     case 1:
+                        // list the current employees
+                        System.out.println("\nCurrent list of employees:");
+                        ExQuery(connection, "select * from employee", false);
                         // prompt the user for:
                         //  emp_id          INTEGER      NOT NULL,
                         //  name            VARCHAR(40) NOT NULL,
@@ -49,7 +50,8 @@ public class OrganizationStructure {
                         //  start_date      DATE         NOT NULL,
                         //  email           VARCHAR(40) NOT NULL,
                         //  password        VARCHAR(20)  NOT NULL,
-                        System.out.println("\nPlease provide the following information for the employee: ");
+
+                        System.out.println("\nPlease provide the following information for the new hire: ");
                         System.out.println("Employee id: ");
                         int emp_id = scanner.nextInt();
                         System.out.println("Employee First and Last Name: ");
@@ -68,7 +70,7 @@ public class OrganizationStructure {
                             String insert_emp = "INSERT INTO employee(emp_id, name, position_title, start_date, email, password) VALUES\n" +
                                     " ("+emp_id+", '"+name+"', '"+pos_title+"', '"+start_date+"', '"+email+"', '"+password+"');";
 
-                            ExUpdate(connection, insert_emp, Boolean.FALSE);
+                            ExUpdate(connection, insert_emp, false);
                         } catch (SQLException e) {
                             if("23505".equals(e.getSQLState())) {
                                 System.out.println("\nThe given employee ID already exists in the database. Please Select a new emp_id.\n");
@@ -85,65 +87,97 @@ public class OrganizationStructure {
                         // the insert statement differs slightly depending on the kind of employee they are
                         switch(choice2) {
                             case 1:
-                                ExUpdate(connection,"INSERT INTO standard(emp_id, team_id) VALUES ("+emp_id+", NULL);", Boolean.FALSE);
+                                ExUpdate(connection,"INSERT INTO standard(emp_id, team_id) VALUES ("+emp_id+", NULL);", false);
                                 System.out.println("\nThe new standard employee has been successfully added to the database.\n");
+                                System.out.println("\nUpdated list of employees:");
+                                ExQuery(connection, "select * from employee", false);
+                                System.out.println("\nUpdated list of standard employees:");
+                                ExQuery(connection, "select * from standard", false);
                                 break;
                             case 2:
-                                ExUpdate(connection,"INSERT INTO manager(emp_id) VALUES ("+emp_id+");", Boolean.FALSE);
+                                ExUpdate(connection,"INSERT INTO manager(emp_id) VALUES ("+emp_id+");", false);
                                 System.out.println("\nThe new manager has been successfully added to the database.\n");
+                                System.out.println("\nUpdated list of employees:");
+                                ExQuery(connection, "select * from employee", false);
+                                System.out.println("\nUpdated list of managers:");
+                                ExQuery(connection, "select * from standard", false);
                                 break;
                             case 3:
-                                ExUpdate(connection,"INSERT INTO supervisor(emp_id, codename, cmpt_name) VALUES ("+emp_id+", NULL, NULL);", Boolean.FALSE);
+                                ExUpdate(connection,"INSERT INTO supervisor(emp_id, codename, cmpt_name) VALUES ("+emp_id+", NULL, NULL);", false);
                                 System.out.println("\nThe new supervisor has been successfully added to the database.\n");
+                                System.out.println("\nUpdated list of employees:");
+                                ExQuery(connection, "select * from employee", false);
+                                System.out.println("\nUpdated list of supervisors:");
+                                ExQuery(connection, "select * from supervisors", false);
                                 break;
                             case 4:
-                                ExUpdate(connection,"INSERT INTO director(emp_id, codename) VALUES ("+emp_id+", NULL);", Boolean.FALSE);
+                                ExUpdate(connection,"INSERT INTO director(emp_id, codename) VALUES ("+emp_id+", NULL);", false);
                                 System.out.println("\nThe new director has been successfully added to the database.\n");
+                                System.out.println("\nUpdated list of employees:");
+                                ExQuery(connection, "select * from employee", false);
+                                System.out.println("\nUpdated list of directors:");
+                                ExQuery(connection, "select * from director", false);
                                 break;
                             default:
                                 System.out.println("\nThe new employee has been successfully added to the database, but does not have a designation.\n");
+                                System.out.println("\nUpdated list of employees:");
+                                ExQuery(connection, "select * from employee", false);
                         }
                         break;
                     case 2:
-                        //todo
-                        // prompt the user for the emp_id
-                        // then delete any tuples from the employee (and its subclass) table
-                        // possibly do something with the sub-menu here
-                        break;
-                    case 3:
-                        //todo
+                        // list the current projects
+                        System.out.println("\nCurrent list of Projects:");
+                        ExQuery(connection, "select * from project", false);
+                        System.out.println("\nPlease provide the following information for the new project: ");
                         // prompt the user for:
                         //  codename       VARCHAR(20)   NOT NULL,
                         //  charter        VARCHAR(2000),
                         //  start_date     DATE          NOT NULL,
                         //  deadline_date  DATE          NOT NULL,
+                        System.out.println("Project Codename: ");
+                        String codename = scanner.next();
+                        System.out.println("Project Charter: ");
+                        String charter = scanner.next();
+                        System.out.println("Start Date: ");
+                        String start = scanner.next();
+                        System.out.println("Deadline Date: ");
+                        String deadline = scanner.next();
+                        // first, try inserting the project into the database. Handle the case where the project codename
+                        // or start/end dates could cause an integrity constraint exception.
+                        try{
+                            String insert_emp = "INSERT INTO project(codename, charter, start_date, deadline_date) VALUES\n" +
+                                    " ('"+codename+"', '"+charter+"', '"+start+"', '"+deadline+"');";
+
+                            ExUpdate(connection, insert_emp, false);
+                        } catch (SQLException e) {
+                            if ("23505".equals(e.getSQLState())) {
+                                System.out.println("\nEither the given project codename already exists in the database, or the" +
+                                        "given deadline is before the given start date.\n");
+                                break;
+                            }
+                        }
                         // then list the available directors for them to assign.
+                        System.out.println("\nA director must be selected to oversee the project. Select an employee id from " +
+                                "the available list of directors below: ");
+                        ExQuery(connection, "select d.emp_id, e.name, e.position_title from director d, employee e where d.emp_id" +
+                                " = e.emp_id and codename is null;", false);
                         // Prompt the user for the emp_id of the required director.
-                        // we'll create the project record, and then attempt
-                        // to assign its director. If the emp_id was not for an
-                        // available director, then notify the user.
+                        int dir_id = scanner.nextInt();
+
+                        ExUpdate(connection, "update director set codename = '"+codename+"' where emp_id = "+dir_id+";", false);
+                        System.out.println("\nThe new project has been successfully added to the database.\n");
+                        System.out.println("\nUpdated list of Projects:");
+                        ExQuery(connection, "select * from project", false);
+                        System.out.println("\nUpdated list of directors:");
+                        ExQuery(connection, "select * from director", false);
+
                         break;
-                    case 4:
-                        //todo
-                        // prompt the user for:
-                        //  title        VARCHAR(50) NOT NULL,
-                        //  start_time   TIMESTAMP    NOT NULL,
-                        //  end_time     TIMESTAMP    NOT NULL,
-                        //  description  VARCHAR(2000),
-                        // and the first two participating employees.
-                        // Then, generate a meeting_id, create the meeting tuple
-                        // and add the first two tuples to the attends table.
-                        // Then, continually prompt the
-                        // user for additional employees to add to the meeting.
-                        // If they return done, then terminate.
-                        break;
-                    case 5:
-                        //todo
+                    case 3:
                         // Run the first modification command
                         try {
-                            ExUpdate(connection, "src/P2/mod1.sql", Boolean.TRUE);
+                            ExUpdate(connection, "src/P2/mod1.sql", true);
                             System.out.println("\nThe following Standard employees were promoted to supervisors:");
-                            ExQuery(connection, "src/extra_sql_P3/promotions.sql", Boolean.TRUE);
+                            ExQuery(connection, "src/extra_sql_P3/promotions.sql", true);
                         }
                         catch(SQLException e) {
                             // this is only for catching the integrity constraint violation exception that occurs when
@@ -151,40 +185,44 @@ public class OrganizationStructure {
                             if("23505".equals(e.getSQLState())) {
                                 System.out.println("\nNo additional standard employees are eligible for a promotion.");
                                 System.out.println("However, the following employees were recently promoted and have not yet been assigned to a project:");
-                                ExQuery(connection, "src/extra_sql_P3/promotions.sql", Boolean.TRUE);
+                                ExQuery(connection, "src/extra_sql_P3/promotions.sql", true);
                             }
                         }
                         break;
-                    case 6:
-                        ExQuery(connection, "select * from team", Boolean.FALSE);
+                    case 4:
+                        ExQuery(connection, "select * from team", false);
                         break;
-                    case 7:
-                        //todo
+                    case 5:
                         // Run Query 2
                         String query2_File = "src/P2/query2.sql";
-                        ExQuery(connection, query2_File, Boolean.TRUE);
+                        ExQuery(connection, query2_File, true);
                         break;
-                    case 8:
-                        //todo
+                    case 6:
                         // Run Query 5
                         String query5_File = "src/P2/query5.sql";
-                        ExQuery(connection, query5_File, Boolean.TRUE);
+                        ExQuery(connection, query5_File, true);
                         break;
-                    case 9:
-                        //todo
+                    case 7:
                         // Run the second modification command
-                        ExUpdate(connection, "src/P2/mod2.sql", Boolean.TRUE);
-                        System.out.println("\nCompleted components were successfully retired.\n");
+                        System.out.println("\nCurrent list of components:");
+                        ExQuery(connection, "select * from component", false);
+
+                        ExUpdate(connection, "src/P2/mod2.sql", true);
+                        System.out.println("\nCompleted components (if any) were successfully retired.\n");
+                        System.out.println("\nUpdated list of components:");
+                        ExQuery(connection, "select * from component", false);
                         break;
-                    case 10:
-                        //todo
+                    case 8:
                         System.out.println("Aufwierdersehn!");
-                        exit(0);
+                        running = false;
                         break;
                     default:
-                        //todo
+
                 }
+
             }
+            // Compiler says that this close() statement is redundant
+            connection.close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
@@ -192,8 +230,8 @@ public class OrganizationStructure {
 
     // private method to execute a query. If the query comes from a file, then the input "Query" should be the file path,
     // and the input "FromFile" should be set to TRUE. Otherwise, "FromFile" should be set to FALSE
-    private static int ExQuery(Connection connection, String Query, Boolean FromFile) throws IOException, SQLException {
-
+    private static int ExQuery(Connection connection, String Query, boolean FromFile) throws IOException, SQLException {
+        // handle whether the query comes from a file or not
         if (FromFile) {
             String queryFile = Query;
             Query = Files.lines(Paths.get(queryFile)).collect(Collectors.joining("\n"));
@@ -205,10 +243,10 @@ public class OrganizationStructure {
         // Get metadata about the result to find the number of columns
         ResultSetMetaData meta = rs.getMetaData();
         int columnCount = meta.getColumnCount();
-
         // print a newline before the output begins
         System.out.println();
-
+        // text to indicate that this is the column for the tuple number
+        System.out.print("Entry No.| ");
         // Print column names
         for (int i = 1; i <= columnCount; i++) {
             System.out.print(meta.getColumnName(i) + "  ");
@@ -216,22 +254,30 @@ public class OrganizationStructure {
         // add one extra line so that the data is separated from the column names
         System.out.print("\n---------------------------------------------------------------\n");
         // Iterate through rows
+        int j = 1;
         while (rs.next()) {
+            // print the row number
+            System.out.print(j + " | ");
             // Iterate through columns
             for (int i = 1; i <= columnCount; i++) {
                 String value = rs.getString(i);  // access by index instead of name
                 System.out.print(value + "  ");
             }
             System.out.println();
+            j++;
         }
         // add one more newline after the output is finished
         System.out.println();
+        // make sure to terminate the statement and result set
+        rs.close();
+
+        stmt.close();
         return 0;
     }
 
     // private method to execute a modification statement
-    private static int ExUpdate(Connection connection, String update, Boolean FromFile) throws IOException, SQLException {
-
+    private static int ExUpdate(Connection connection, String update, boolean FromFile) throws IOException, SQLException {
+        // handle whether the modification comes from a query or not
         if (FromFile) {
             String updateFile = update;
             update = Files.lines(Paths.get(updateFile)).collect(Collectors.joining("\n"));
@@ -239,7 +285,9 @@ public class OrganizationStructure {
 
         Statement stmt = connection.createStatement();
         stmt.executeUpdate(update);
-
+        // make sure to close the statement
+        stmt.close();
         return 0;
+
     }
 }

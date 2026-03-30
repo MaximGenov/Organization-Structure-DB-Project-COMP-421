@@ -25,6 +25,10 @@ INSERT INTO employee(emp_id, name, position_title, start_date, email, password) 
  (12, 'Ellie Lock', 'Electrical Subsystems Supervisor', '2014-04-03', 'elock43@gmail.com', 'GiveMeaRaze100%'),
  (13, 'Anna Novikov', 'Project Direction Specialist', '2008-11-02', 'annikov9@sympatico.com', 'iLoveMyJob*'),
  (1405, 'Madeline Mora', 'Chief Technical Officer', '2011-06-14', 'maddiem49@crosstrek.com', 'wheresMyCoffee08'),
+ (1521, 'Brook Campbell', 'Chief Research Officer', '2016-03-11', 'bcbell44@eezdesign.com', 'hotdoghotdog12'),
+ (1623, 'Archie Betts', 'VP Engineering', '2009-09-03', 'arbetts@eezdesign.com', 'comicSANS'),
+ (1703, 'Steven Broglie', 'Chief Operations Officer', '2015-10-12', 'stev@debroglie.com', 'PapyrusIsBetter2'),
+
  
  -- AI generated data:
  (2001, 'Victor Havel', 'Director of Autonomous Systems', '2010-05-11', 'vhavel@evdesign.com', 'dirPass88'),
@@ -129,6 +133,10 @@ INSERT INTO supervisor(emp_id, codename, cmpt_name) VALUES
 INSERT INTO director(emp_id, codename) VALUES
  (13, 'Bear'),
  (1405, 'Cobra'),
+ (1521, NULL),
+ (1623, NULL),
+ (1703, NULL),
+
  
  -- AI generated data
  (2001, 'Orion')
