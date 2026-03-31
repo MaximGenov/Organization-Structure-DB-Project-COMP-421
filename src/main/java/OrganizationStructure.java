@@ -100,7 +100,7 @@ public class OrganizationStructure {
                                 System.out.println("\nUpdated list of employees:");
                                 ExQuery(connection, "select * from employee", false);
                                 System.out.println("\nUpdated list of managers:");
-                                ExQuery(connection, "select * from standard", false);
+                                ExQuery(connection, "select * from manager", false);
                                 break;
                             case 3:
                                 ExUpdate(connection,"INSERT INTO supervisor(emp_id, codename, cmpt_name) VALUES ("+emp_id+", NULL, NULL);", false);
@@ -108,7 +108,7 @@ public class OrganizationStructure {
                                 System.out.println("\nUpdated list of employees:");
                                 ExQuery(connection, "select * from employee", false);
                                 System.out.println("\nUpdated list of supervisors:");
-                                ExQuery(connection, "select * from supervisors", false);
+                                ExQuery(connection, "select * from supervisor", false);
                                 break;
                             case 4:
                                 ExUpdate(connection,"INSERT INTO director(emp_id, codename) VALUES ("+emp_id+", NULL);", false);
